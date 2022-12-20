@@ -1,6 +1,10 @@
 const Hapi = require('@hapi/hapi');
+const Cookie = require('@hapi/cookie');
+const Bell = require('@hapi/bell');
 const TonStorageCLI = require('tonstorage-cli');
+
 const routes = require('./routes');
+const config = require('./config');
 
 process.on('unhandledRejection', (err) => {
   console.log(err);
@@ -9,8 +13,8 @@ process.on('unhandledRejection', (err) => {
 
 (async () => {
   const server = Hapi.server({
-    port: 3000,
-    host: '0.0.0.0',
+    port: config.server.port,
+    host: config.server.host,
     routes: {
       cors: true,
       response: {
@@ -19,15 +23,16 @@ process.on('unhandledRejection', (err) => {
     },
   });
 
-  const tonstorage = new TonStorageCLI({
-    bin: '/root/storage-daemon-cli',
-    host: '127.0.0.1:5555',
-    database: '/var/ton-storage',
-    timeout: 5000,
-  });
+  const tonstorage = new TonStorageCLI(config.tonstorage);
   server.app.tonstorage = tonstorage;
 
+  await server.register(Bell);
+  await server.register(Cookie);
+  server.auth.strategy('github', 'bell', config.auth);
+  server.auth.strategy('session', 'cookie', config.session);
+
   server.route(routes.home);
+  server.route(routes.auth);
   server.route(routes.gateway);
 
   await server.start();
