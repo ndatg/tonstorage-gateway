@@ -2,6 +2,7 @@ module.exports = {
   app: {
     gatewayPrefix: '/itfs',
     authPrefix: '/auth',
+    whitelistMode: false,
   },
   server: {
     port: 3000,

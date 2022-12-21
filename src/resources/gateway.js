@@ -6,7 +6,6 @@ const fs = require('fs');
 
 const fsPromises = fs.promises;
 const utils = require('../utils/gateway');
-const config = require('../config');
 
 module.exports = {
   async gateway(request, h) {
@@ -29,7 +28,8 @@ module.exports = {
     // check torrent
     const torrent = await tonstorage.get(hash);
     if (!torrent.ok) {
-      throw Boom.boomify(new Error('Torrent not found'), { statusCode: 400 });
+      await tonstorage.addByHash(hash, { download: true, partialFiles: [filename] });
+      await tonstorage.priorityAll(hash, 0);
     }
 
     // check file
@@ -41,6 +41,12 @@ module.exports = {
     // check file size
     if (utils.parseSize(file.size) > utils.parseSize('10MB')) {
       throw Boom.boomify(new Error('File is larger than 10MB'), { statusCode: 400 });
+    }
+
+    // download file
+    const download = await tonstorage.priorityName(hash, filename, 1);
+    if (!download.ok) {
+      throw Boom.boomify(new Error('File download error'), { statusCode: 400 });
     }
 
     // check ready
@@ -63,82 +69,5 @@ module.exports = {
     response.header('cache-control', 'public, max-age=29030400, immutable');
     response.header('content-disposition', `inline; filename*=UTF-8''${encodeURIComponent(filename)}`);
     return response;
-  },
-
-  async download(request, h) {
-    // check auth
-    const username = request.auth.credentials ? request.auth.credentials.username : null;
-    if (!request.auth.isAuthenticated || !config.whitelist.includes(username)) {
-      throw Boom.boomify(new Error('Not authenticated'), { statusCode: 400 });
-    }
-
-    // vars
-    const { tonstorage } = request.server.app;
-    const { hash, filename } = request.params;
-
-    // check torrent
-    const torrent = await tonstorage.get(hash);
-    if (!torrent.ok) {
-      await tonstorage.addByHash(hash, { download: true, partialFiles: [filename] });
-      await tonstorage.priorityAll(hash, 0);
-    }
-
-    // check file
-    const file = utils.getFile(torrent, filename);
-    if (!file) {
-      throw Boom.boomify(new Error('File not found'), { statusCode: 400 });
-    }
-
-    // check file size
-    if (utils.parseSize(file.size) > utils.parseSize('10MB')) {
-      throw Boom.boomify(new Error('File is larger than 10MB'), { statusCode: 400 });
-    }
-
-    // check ready
-    if (file.ready === file.size) {
-      throw Boom.boomify(new Error('File downloaded earlier'), { statusCode: 400 });
-    }
-
-    // download file
-    const download = await tonstorage.priorityName(hash, filename, 1);
-    if (!download.ok) {
-      throw Boom.boomify(new Error('Unknown error'), { statusCode: 400 });
-    }
-
-    // response
-    return h.response({
-      statusCode: 200,
-      message: 'File added for download',
-    });
-  },
-
-  async remove(request, h) {
-    // check auth
-    const username = request.auth.credentials ? request.auth.credentials.username : null;
-    if (!request.auth.isAuthenticated || !config.whitelist.includes(username)) {
-      throw Boom.boomify(new Error('Not authenticated'), { statusCode: 400 });
-    }
-
-    // vars
-    const { tonstorage } = request.server.app;
-    const { hash } = request.params;
-
-    // check torrent
-    const torrent = await tonstorage.get(hash);
-    if (!torrent.ok) {
-      throw Boom.boomify(new Error('Torrent not found'), { statusCode: 400 });
-    }
-
-    // remove torrent
-    const remove = await tonstorage.remove(hash, { removeFiles: true });
-    if (!remove.ok) {
-      throw Boom.boomify(new Error('Unknown error'), { statusCode: 400 });
-    }
-
-    // response
-    return h.response({
-      statusCode: 200,
-      message: 'Files removed',
-    });
   },
 };
