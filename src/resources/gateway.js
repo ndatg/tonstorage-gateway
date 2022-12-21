@@ -6,6 +6,7 @@ const fs = require('fs');
 
 const fsPromises = fs.promises;
 const utils = require('../utils/gateway');
+const config = require('../config');
 
 module.exports = {
   async gateway(request, h) {
@@ -39,8 +40,8 @@ module.exports = {
     }
 
     // check file size
-    if (utils.parseSize(file.size) > utils.parseSize('10MB')) {
-      throw Boom.boomify(new Error('File is larger than 10MB'), { statusCode: 400 });
+    if (utils.parseSize(file.size) > utils.parseSize(config.app.maxFileSize)) {
+      throw Boom.boomify(new Error(`File is larger than ${config.app.maxFileSize}`), { statusCode: 400 });
     }
 
     // download file

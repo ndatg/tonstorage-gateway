@@ -2,6 +2,7 @@ module.exports = {
   app: {
     gatewayPrefix: '/itfs',
     authPrefix: '/auth',
+    maxFileSize: '10MB',
     whitelistMode: false,
   },
   server: {
