@@ -32,8 +32,12 @@ process.on('unhandledRejection', (err) => {
   server.auth.strategy('session', 'cookie', config.session);
 
   server.route(routes.home);
-  server.route(routes.auth);
-  server.route(routes.gateway);
+  if (config.app.whitelistMode) {
+    server.route(routes.auth);
+    server.route(routes.gatewayWL);
+  } else {
+    server.route(routes.gateway);
+  }
 
   await server.start();
   console.log('Server running on %s', server.info.uri);
