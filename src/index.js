@@ -1,11 +1,13 @@
 const Hapi = require('@hapi/hapi');
-const Cookie = require('@hapi/cookie');
 const Bell = require('@hapi/bell');
+const Cookie = require('@hapi/cookie');
 const TonStorageCLI = require('tonstorage-cli');
 
 const routes = require('./routes');
 const config = require('./config');
 
+process.on('SIGINT', () => process.exit(0));
+process.on('SIGTERM', () => process.exit(0));
 process.on('unhandledRejection', (err) => {
   console.log(err);
   process.exit(1);
