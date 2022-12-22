@@ -19,4 +19,41 @@ module.exports = [
       },
     },
   },
+  {
+    method: 'GET',
+    path: `${config.app.gatewayPrefix}/download/{hash}/{filename*}`,
+    handler: resources.gateway.download,
+    options: {
+      auth: {
+        mode: 'try',
+        strategy: 'session',
+      },
+      validate: {
+        params: Joi.object({
+          hash: Joi.string().regex(/[A-F0-9]/i).min(64).max(64)
+            .uppercase()
+            .required(),
+          filename: Joi.any().required(),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: `${config.app.gatewayPrefix}/remove/{hash}`,
+    handler: resources.gateway.remove,
+    options: {
+      auth: {
+        mode: 'try',
+        strategy: 'session',
+      },
+      validate: {
+        params: Joi.object({
+          hash: Joi.string().regex(/[A-F0-9]/i).min(64).max(64)
+            .uppercase()
+            .required(),
+        }),
+      },
+    },
+  },
 ];

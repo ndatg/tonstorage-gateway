@@ -3,9 +3,10 @@ module.exports = {
     gatewayPrefix: '/itfs',
     authPrefix: '/auth',
     maxFileSize: '10MB',
+    whitelistMode: false,
+    autoloadMode: true,
   },
   security: {
-    whitelistMode: false,
     disableIP: false,
   },
   server: {

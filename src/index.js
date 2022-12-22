@@ -51,11 +51,9 @@ const init = async () => {
   });
 
   server.route(routes.home);
-  if (config.security.whitelistMode) {
+  server.route(routes.gateway);
+  if (config.app.whitelistMode) {
     server.route(routes.auth);
-    server.route(routes.gatewayWL);
-  } else {
-    server.route(routes.gateway);
   }
 
   // start
