@@ -3,11 +3,15 @@ module.exports = {
     gatewayPrefix: '/itfs',
     authPrefix: '/auth',
     maxFileSize: '10MB',
+  },
+  security: {
     whitelistMode: false,
+    disableIP: false,
   },
   server: {
     port: 3000,
     host: '0.0.0.0',
+    hostname: 'domain.ton',
   },
   tonstorage: {
     bin: '/root/storage-daemon-cli',

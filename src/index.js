@@ -42,8 +42,16 @@ const init = async () => {
   });
 
   // routes
+  server.ext('onRequest', (request, h) => {
+    if (config.security.disableIP && request.info.hostname !== config.server.hostname) {
+      return h.response().code(444).takeover();
+    }
+
+    return h.continue;
+  });
+
   server.route(routes.home);
-  if (config.app.whitelistMode) {
+  if (config.security.whitelistMode) {
     server.route(routes.auth);
     server.route(routes.gatewayWL);
   } else {
