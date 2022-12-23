@@ -34,7 +34,7 @@ const init = async () => {
   server.auth.strategy('github', 'bell', config.auth);
   server.auth.strategy('session', 'cookie', config.session);
 
-  // view
+  // views
   server.views({
     engines: { html: Handlebars },
     relativeTo: __dirname,
