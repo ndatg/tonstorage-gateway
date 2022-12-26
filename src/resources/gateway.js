@@ -29,7 +29,7 @@ module.exports = {
     // check torrent
     const torrent = await tonstorage.get(hash);
     if (!torrent.ok && config.app.autoloadMode) {
-      await tonstorage.addByHash(hash, { download: true, partialFiles: [filename] });
+      await tonstorage.addByHash(hash, { download: true, upload: false, partialFiles: [filename] });
       await tonstorage.priorityAll(hash, 0);
     }
     if (!torrent.ok && !config.app.autoloadMode) {
@@ -43,7 +43,7 @@ module.exports = {
     }
 
     // check file size
-    if (utils.parseSize(file.size) > utils.parseSize(config.app.maxFileSize)) {
+    if (file.size > utils.parseSize(config.app.maxFileSize)) {
       throw Boom.boomify(new Error(`File is larger than ${config.app.maxFileSize}`), { statusCode: 400 });
     }
 
@@ -56,14 +56,14 @@ module.exports = {
     }
 
     // check ready
-    if (file.ready !== file.size) {
+    if (file.size !== file.downloaded_size) {
       throw Boom.boomify(new Error('File is not ready yet'), { statusCode: 400 });
     }
 
     // response
-    let filePath = path.resolve(torrent.result.rootDir, file.name);
-    if (torrent.result.dirName) {
-      filePath = path.resolve(torrent.result.rootDir, torrent.result.dirName, file.name);
+    let filePath = path.resolve(torrent.result.torrent.root_dir, file.name);
+    if (torrent.result.torrent.dir_name.length > 0) {
+      filePath = path.resolve(torrent.result.torrent.root_dir, torrent.result.torrent.dir_name, file.name);
     }
     const fileStat = await fsPromises.stat(filePath);
     const response = h.response(fs.createReadStream(filePath)).bytes(fileStat.size);
@@ -91,7 +91,7 @@ module.exports = {
     // check torrent
     const torrent = await tonstorage.get(hash);
     if (!torrent.ok) {
-      await tonstorage.addByHash(hash, { download: true, partialFiles: [filename] });
+      await tonstorage.addByHash(hash, { download: true, upload: false, partialFiles: [filename] });
       await tonstorage.priorityAll(hash, 0);
     }
 
@@ -102,7 +102,7 @@ module.exports = {
     }
 
     // check ready
-    if (file.ready === file.size) {
+    if (file.size === file.downloaded_size) {
       throw Boom.boomify(new Error('File downloaded earlier'), { statusCode: 400 });
     }
 
