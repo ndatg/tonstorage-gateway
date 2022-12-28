@@ -47,16 +47,16 @@ module.exports = {
       throw Boom.boomify(new Error(`File is larger than ${config.app.maxFileSize}`), { statusCode: 400 });
     }
 
-    // download file
-    if (config.app.autoloadMode) {
-      const download = await tonstorage.priorityName(hash, filename, 1);
-      if (!download.ok) {
-        throw Boom.boomify(new Error('File download error'), { statusCode: 400 });
-      }
-    }
-
     // check ready
     if (file.size !== file.downloaded_size) {
+      // download file
+      if (config.app.autoloadMode) {
+        const download = await tonstorage.priorityName(hash, filename, 1);
+        if (!download.ok) {
+          throw Boom.boomify(new Error('File download error'), { statusCode: 400 });
+        }
+      }
+
       throw Boom.boomify(new Error('File is not ready yet'), { statusCode: 400 });
     }
 
