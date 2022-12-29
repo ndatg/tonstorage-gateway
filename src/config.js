@@ -13,7 +13,7 @@ module.exports = {
     'ndatg',
   ],
   server: {
-    port: process.env.SERVER_PORT,
+    port: parseInt(process.env.SERVER_PORT, 10),
     host: process.env.SERVER_HOST,
     hostname: process.env.SERVER_HOSTNAME,
   },
@@ -21,14 +21,14 @@ module.exports = {
     bin: process.env.TONSTORAGE_BIN,
     host: process.env.TONSTORAGE_HOST,
     database: process.env.TONSTORAGE_DATABASE,
-    timeout: process.env.TONSTORAGE_TIMEOUT,
+    timeout: parseInt(process.env.TONSTORAGE_TIMEOUT, 10),
   },
   session: {
     cookie: {
       name: process.env.SESSION_COOKIE_NAME,
       password: process.env.SESSION_COOKIE_PASSWORD,
       path: process.env.SESSION_COOKIE_PATH,
-      isSecure: process.env.SESSION_COOKIE_ISSECURE,
+      isSecure: (process.env.SESSION_COOKIE_ISSECURE.toLowerCase() === 'true'),
     },
     redirectTo: '/',
   },
@@ -37,6 +37,6 @@ module.exports = {
     password: process.env.GITHUB_AUTH_PASSWORD,
     clientId: process.env.GITHUB_AUTH_CLIENTID,
     clientSecret: process.env.GITHUB_AUTH_CLIENTSECRET,
-    isSecure: process.env.GITHUB_AUTH_ISSECURE,
+    isSecure: (process.env.GITHUB_AUTH_ISSECURE.toLowerCase() === 'true'),
   },
 };
