@@ -1,6 +1,6 @@
 module.exports = {
   app: {
-    gatewayPrefix: '/storage',
+    gatewayPrefix: '/gateway',
     authPrefix: '/auth',
     maxFileSize: '10MB',
     whitelistMode: false,
