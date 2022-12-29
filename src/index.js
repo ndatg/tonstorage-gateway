@@ -1,3 +1,4 @@
+require('dotenv').config();
 const Hapi = require('@hapi/hapi');
 const Bell = require('@hapi/bell');
 const Cookie = require('@hapi/cookie');

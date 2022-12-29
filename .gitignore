@@ -4,3 +4,4 @@
 /test-reports/
 .DS_Store
 *.iml
+.env

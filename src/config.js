@@ -9,34 +9,34 @@ module.exports = {
   security: {
     disableIP: false,
   },
+  whitelist: [
+    'ndatg',
+  ],
   server: {
-    port: 3000,
-    host: '0.0.0.0',
-    hostname: 'domain.ton',
+    port: process.env.SERVER_PORT,
+    host: process.env.SERVER_HOST,
+    hostname: process.env.SERVER_HOSTNAME,
   },
   tonstorage: {
-    bin: '/root/storage-daemon-cli',
-    host: '127.0.0.1:5555',
-    database: '/var/ton-storage',
-    timeout: 5000,
+    bin: process.env.TONSTORAGE_BIN,
+    host: process.env.TONSTORAGE_HOST,
+    database: process.env.TONSTORAGE_DATABASE,
+    timeout: process.env.TONSTORAGE_TIMEOUT,
   },
   session: {
     cookie: {
-      name: 'sid',
-      password: 'cookiepassword',
-      path: '/',
-      isSecure: false, // change to true on prod
+      name: process.env.SESSION_COOKIE_NAME,
+      password: process.env.SESSION_COOKIE_PASSWORD,
+      path: process.env.SESSION_COOKIE_PATH,
+      isSecure: process.env.SESSION_COOKIE_ISSECURE,
     },
     redirectTo: '/',
   },
   auth: {
     provider: 'github',
-    password: 'authpassword',
-    clientId: 'authcliendid',
-    clientSecret: 'authclientsecret',
-    isSecure: false, // change to true on prod
+    password: process.env.GITHUB_AUTH_PASSWORD,
+    clientId: process.env.GITHUB_AUTH_CLIENTID,
+    clientSecret: process.env.GITHUB_AUTH_CLIENTSECRET,
+    isSecure: process.env.GITHUB_AUTH_ISSECURE,
   },
-  whitelist: [
-    'ndatg',
-  ],
 };
