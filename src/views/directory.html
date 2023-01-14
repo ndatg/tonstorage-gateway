@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Index of /{{path}}</title>
+</head>
+<style>
+    .table {
+        font-family: monospace;
+        border-spacing: 0;
+        border-collapse: collapse;
+    }
+
+    .name {
+        width: 300px;
+    }
+
+    .size {
+        text-align: right;
+    }
+</style>
+<body>
+    <h1>Index of /{{path}}</h1>
+    <hr>
+    <table class="table">
+        <tr>
+            <td><b>Path</b></td>
+            <td class="size"><b>Size</b></td>
+        </tr>
+        {{#unless root}}
+        <tr>
+            <td colspan="2"><a href="../">../</a></td>
+        </tr>
+        {{/unless}}
+        {{#each data}}
+        <tr>
+            <td class="name"><a href="{{name}}">{{name}}</a></td>
+            <td class="size">{{size}} bytes</td>
+        </tr>
+        {{/each}}
+    </table>
+    <hr>
+</body>
+</html>

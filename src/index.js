@@ -14,6 +14,9 @@ const init = async () => {
   const server = Hapi.server({
     port: config.server.port,
     host: config.server.host,
+    router: {
+      stripTrailingSlash: false,
+    },
     routes: {
       cors: true,
       response: {

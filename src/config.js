@@ -6,6 +6,10 @@ module.exports = {
     whitelistMode: false,
     autoloadMode: true,
   },
+  display: {
+    index: ['index.html', 'index.htm'],
+    singleFile: true,
+  },
   security: {
     disableIP: false,
   },

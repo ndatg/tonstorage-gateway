@@ -1,7 +1,7 @@
 const Boom = require('@hapi/boom');
 const mime = require('mime-types');
 const crypto = require('crypto');
-const path = require('path');
+const { resolve, extname, basename } = require('path');
 const fs = require('fs');
 
 const fsPromises = fs.promises;
@@ -9,11 +9,19 @@ const utils = require('../utils/gateway');
 const config = require('../config');
 
 module.exports = {
-  async gateway(request, h) {
+  async gateway(request, h, display = true) {
     // vars
     const { tonstorage } = request.server.app;
-    const { hash, filename } = request.params;
-    const etag = `"${crypto.createHash('sha256').update(`${hash}/${filename}`, 'utf-8').digest('hex')}"`;
+    const { path } = request.params;
+    const gatewayPath = decodeURI(path);
+    const hash = utils.getHash(gatewayPath);
+    const filename = utils.getFilename(gatewayPath);
+    if (!hash) {
+      throw Boom.boomify(new Error('Hash not found'), { statusCode: 400 });
+    }
+
+    // cache
+    const etag = `"${crypto.createHash('sha256').update(path, 'utf-8').digest('hex')}"`;
 
     // if-none-match && etag
     const cachedEtag = request.headers['if-none-match'];
@@ -31,14 +39,31 @@ module.exports = {
     if (!torrent.ok && config.app.autoloadMode) {
       await tonstorage.addByHash(hash, { download: true, upload: false, partialFiles: [filename] });
       await tonstorage.priorityAll(hash, 0);
+      return h.response({
+        statusCode: 200,
+        message: 'Torrent added, please refresh the page to download the file',
+      });
     }
     if (!torrent.ok && !config.app.autoloadMode) {
       throw Boom.boomify(new Error('Torrent not found'), { statusCode: 400 });
     }
+    if (torrent.ok && torrent.result.files.length === 0) {
+      throw Boom.boomify(new Error('Torrent is not ready yet'), { statusCode: 400 });
+    }
 
     // check file
-    const file = utils.getFile(torrent, filename);
+    const file = utils.loadFile(torrent, filename, display ? config.display : { index: [], singleFile: false });
     if (!file) {
+      // trailing slash
+      if (!path.endsWith('/')) {
+        return h.redirect(`${config.app.gatewayPrefix}/${path}/`).permanent(true);
+      }
+
+      const data = utils.getDirectory(torrent, filename);
+      if (data) {
+        return h.view('directory', { path, data, root: filename === false });
+      }
+
       throw Boom.boomify(new Error('File not found'), { statusCode: 400 });
     }
 
@@ -51,7 +76,7 @@ module.exports = {
     if (file.size !== file.downloaded_size) {
       // download file
       if (config.app.autoloadMode) {
-        const download = await tonstorage.priorityName(hash, filename, 1);
+        const download = await tonstorage.priorityName(hash, file.name, 1);
         if (!download.ok) {
           throw Boom.boomify(new Error('File download error'), { statusCode: 400 });
         }
@@ -61,19 +86,19 @@ module.exports = {
     }
 
     // response
-    let filePath = path.resolve(torrent.result.torrent.root_dir, file.name);
+    let filePath = resolve(torrent.result.torrent.root_dir, file.name);
     if (torrent.result.torrent.dir_name.length > 0) {
-      filePath = path.resolve(torrent.result.torrent.root_dir, torrent.result.torrent.dir_name, file.name);
+      filePath = resolve(torrent.result.torrent.root_dir, torrent.result.torrent.dir_name, file.name);
     }
     const fileStat = await fsPromises.stat(filePath);
     const response = h.response(fs.createReadStream(filePath)).bytes(fileStat.size);
-    const contentType = await mime.contentType(path.extname(filePath));
+    const contentType = await mime.contentType(extname(filePath));
     if (contentType) {
       response.header('content-type', contentType);
     }
     response.header('etag', etag);
     response.header('cache-control', 'public, max-age=29030400, immutable');
-    response.header('content-disposition', `inline; filename*=UTF-8''${encodeURIComponent(filename)}`);
+    response.header('content-disposition', `inline; filename*=UTF-8''${encodeURIComponent(basename(filePath))}`);
     return response;
   },
 
@@ -86,13 +111,29 @@ module.exports = {
 
     // vars
     const { tonstorage } = request.server.app;
-    const { hash, filename } = request.params;
+    const { path } = request.params;
+    const gatewayPath = decodeURI(path);
+    const hash = utils.getHash(gatewayPath);
+    const filename = utils.getFilename(gatewayPath);
+    if (!hash) {
+      throw Boom.boomify(new Error('Hash not found'), { statusCode: 400 });
+    }
+    if (!filename) {
+      throw Boom.boomify(new Error('Filename not found'), { statusCode: 400 });
+    }
 
     // check torrent
     const torrent = await tonstorage.get(hash);
     if (!torrent.ok) {
       await tonstorage.addByHash(hash, { download: true, upload: false, partialFiles: [filename] });
       await tonstorage.priorityAll(hash, 0);
+      return h.response({
+        statusCode: 200,
+        message: 'Torrent added, please refresh the page to download the file',
+      });
+    }
+    if (torrent.ok && torrent.result.files.length === 0) {
+      throw Boom.boomify(new Error('Torrent is not ready yet'), { statusCode: 400 });
     }
 
     // check file
@@ -128,7 +169,12 @@ module.exports = {
 
     // vars
     const { tonstorage } = request.server.app;
-    const { hash } = request.params;
+    const { path } = request.params;
+    const gatewayPath = decodeURI(path);
+    const hash = utils.getHash(gatewayPath);
+    if (!hash) {
+      throw Boom.boomify(new Error('Hash not found'), { statusCode: 400 });
+    }
 
     // check torrent
     const torrent = await tonstorage.get(hash);

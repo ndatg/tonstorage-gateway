@@ -6,22 +6,33 @@ const config = require('../config');
 module.exports = [
   {
     method: 'GET',
-    path: `${config.app.gatewayPrefix}/{hash}/{filename*}`,
+    path: `${config.app.gatewayPrefix}/{path*}`,
     handler: resources.gateway.gateway,
     options: {
       validate: {
         params: Joi.object({
-          hash: Joi.string().regex(/[A-F0-9]/i).min(64).max(64)
-            .uppercase()
-            .required(),
-          filename: Joi.any().required(),
+          path: Joi.string().required(),
         }),
       },
     },
   },
   {
     method: 'GET',
-    path: `${config.app.gatewayPrefix}/download/{hash}/{filename*}`,
+    path: `${config.app.gatewayPrefix}/files/{path*}`,
+    handler(request, h) {
+      return resources.gateway.gateway(request, h, false);
+    },
+    options: {
+      validate: {
+        params: Joi.object({
+          path: Joi.string().required(),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: `${config.app.gatewayPrefix}/download/{path*}`,
     handler: resources.gateway.download,
     options: {
       auth: {
@@ -30,17 +41,14 @@ module.exports = [
       },
       validate: {
         params: Joi.object({
-          hash: Joi.string().regex(/[A-F0-9]/i).min(64).max(64)
-            .uppercase()
-            .required(),
-          filename: Joi.any().required(),
+          path: Joi.string().required(),
         }),
       },
     },
   },
   {
     method: 'GET',
-    path: `${config.app.gatewayPrefix}/remove/{hash}`,
+    path: `${config.app.gatewayPrefix}/remove/{path*}`,
     handler: resources.gateway.remove,
     options: {
       auth: {
@@ -49,9 +57,7 @@ module.exports = [
       },
       validate: {
         params: Joi.object({
-          hash: Joi.string().regex(/[A-F0-9]/i).min(64).max(64)
-            .uppercase()
-            .required(),
+          path: Joi.string().required(),
         }),
       },
     },
