@@ -22,7 +22,7 @@
     "handlebars": "^4.7.7",
     "joi": "^17.7.0",
     "mime-types": "^2.1.35",
-    "tonstorage-cli": "github:ndatg/tonstorage-cli"
+    "tonstorage-cli": "^1.0.3"
   },
   "devDependencies": {
     "eslint": "8.22.0",
