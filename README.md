@@ -38,7 +38,7 @@ Run the `storage-daemon`:
 ```bash
 ./storage-daemon -v 3 -C testnet-global.config.json -I <IP>:<PORT> -p <CLI-PORT> -D /var/ton-storage --storage-provider
 ```
-Write `./storage-daemon --help` for details.
+Run `./storage-daemon --help` for details.
 
 ### Setup the app environment
 Create a new `.env` file based on the `.env.example`.
