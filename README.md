@@ -3,10 +3,10 @@
 TON Storage Gateway is a Node.js application that allows you to retrieve content from [TON Storage](https://ton.org/docs/participate/ton-storage/storage-faq) via the http(s) protocol.
 
 ## Overview
-- use the path `/gateway/<bagid>/<file-path>` to view the contents of the `<file-path>`;
-- use the path `/gateway/files/<bagid>/<catalog-path>` to view the files and folders of the `<catalog-path>`;
-- use the path `/gateway/download/<bagid>/<file-path>` to download the `<file-path>`;
-- use the path `/gateway/remove/<bagid>` to remove the `<bagid>` files;
+- use the path `/gateway/<bag-id>/<file-path>` to view the contents of the `<file-path>`;
+- use the path `/gateway/files/<bag-id>/<catalog-path>` to view the files and folders of the `<catalog-path>`;
+- use the path `/gateway/download/<bag-id>/<file-path>` to download the `<file-path>`;
+- use the path `/gateway/remove/<bag-id>` to remove the `<bag-id>` files;
 - use the path `/auth/signin` for admin authentication;
 - use the path `/auth/signout` for admin exit.
 
