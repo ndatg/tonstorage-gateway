@@ -21,6 +21,7 @@ You can install this application with [docker container](https://github.com/kdim
 npm install pm2 -g
 ```
 
+___
 ### Install the app
 ```bash
 git clone https://github.com/ndatg/tonstorage-gateway.git
@@ -28,9 +29,11 @@ cd tonstorage-gateway
 npm install
 ```
 
+___
 ### Download storage-daemon and storage-daemon-cli
 You can download `storage-daemon` and `storage-daemon-cli` for Linux/Windows/MacOS binaries from [TON Auto Builds](https://github.com/ton-blockchain/ton/actions?query=branch%3Atestnet+is%3Asuccess).
 
+___
 ### Run the storage-daemon
 Download the [network configuration file](https://ton.org/docs/develop/howto/network-configs).
 
@@ -40,6 +43,7 @@ Run the `storage-daemon`:
 ```
 Run `./storage-daemon --help` for details.
 
+___
 ### Setup the app environment
 Create a new `.env` file based on the `.env.example`.
 ```bash
@@ -85,10 +89,12 @@ The variables below are only used when `whitelistMode` is enabled in the [src/co
 - `GITHUB_AUTH_CLIENTSECRET` - parameter from [GitHub OAuth configuration](https://docs.github.com/en/rest/guides/basics-of-authentication?apiVersion=2022-11-28);
 - `GITHUB_AUTH_ISSECURE` - session cookie is only send to the server with an encrypted request over the https protocol.
 
+___
 ### Configure the app
 
 The configuration can be found in the [src/config.js](src/config.js) file.
 
+___
 ### Run the app
 
 ```bash
@@ -101,6 +107,7 @@ pm2 status
 pm2 log
 ```
 
+___
 ## License
 
 Released under the [MIT License](LICENSE).
