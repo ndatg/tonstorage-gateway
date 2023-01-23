@@ -5,16 +5,17 @@ TON Storage Gateway is a Node.js application that allows you to retrieve content
 ## Overview
 - use the path `/gateway/<bag-id>/<file-path>` to view the content of the `<file-path>`;
 - use the path `/gateway/files/<bag-id>/<catalog-path>` to view the files and folders of the `<catalog-path>`;
-- use the path `/gateway/download/<bag-id>/<file-path>` to download the `<file-path>`;
-- use the path `/gateway/remove/<bag-id>` to remove the `<bag-id>` files;
+- use the path `/gateway/download/<bag-id>/<file-path>` to request gateway to download the `<file-path>` from <bag-id> to local storage (requires authorization) ;
+- use the path `/gateway/remove/<bag-id>` to remove the `<bag-id>` files from local storage (requires authorization);
 - use the path `/auth/signin` for admin authentication;
 - use the path `/auth/signout` for admin exit.
 
 You can configure the app and change the prefixes in the [src/config.js](src/config.js) file.
 
-## Installation
-
+## Ready-to-go Docker container
 You can install this application with [docker container](https://github.com/kdimentionaltree/ton-storage-docker) or do each step yourself.
+
+## Manual installation
 
 ### Install PM2
 ```bash 
