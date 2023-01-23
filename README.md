@@ -5,7 +5,7 @@ TON Storage Gateway is a Node.js application that allows you to retrieve content
 ## Overview
 - use the path `/gateway/<bag-id>/<file-path>` to view the content of the `<file-path>`;
 - use the path `/gateway/files/<bag-id>/<catalog-path>` to view the files and folders of the `<catalog-path>`;
-- use the path `/gateway/download/<bag-id>/<file-path>` to request gateway to download the `<file-path>` from <bag-id> to local storage (requires authorization) ;
+- use the path `/gateway/download/<bag-id>/<file-path>` to request gateway to download the `<file-path>` from `<bag-id>` to local storage (requires authorization);
 - use the path `/gateway/remove/<bag-id>` to remove the `<bag-id>` files from local storage (requires authorization);
 - use the path `/auth/signin` for admin authentication;
 - use the path `/auth/signout` for admin exit.
@@ -75,13 +75,13 @@ GITHUB_AUTH_ISSECURE=false
 Where:
 - `SERVER_PORT` - PORT of your http(s) application;
 - `SERVER_HOST` - IP address of your http(s) application;
-- `SERVER_HOSTNAME` - domain name, used when `disableIP` mode is enabled in the [src/config.js](src/config.js) file;
+- `SERVER_HOSTNAME` - domain name, used when `disableIP` is enabled in the [src/config.js](src/config.js) file;
 - `TONSTORAGE_BIN` - absolute path to `storage-daemon-cli`;
 - `TONSTORAGE_HOST` - `<IP>:<CLI-PORT>` of `storage-daemon`;
-- `TONSTORAGE_DATABASE` - absolute path to the `storage-daemon` database;
+- `TONSTORAGE_DATABASE` - absolute path to `storage-daemon` database;
 - `TONSTORAGE_TIMEOUT` - timeout when calling `storage-daemon`.
 
-The variables below are only used when `whitelistMode` is enabled in the [src/config.js](src/config.js) file:
+The constants below are only used when `whitelistMode` is enabled in the [src/config.js](src/config.js) file:
 - `SESSION_COOKIE_NAME` - session name;
 - `SESSION_COOKIE_PASSWORD` - cookie password, used to encode the cookie, requires a length of at least 32 characters;
 - `SESSION_COOKIE_ISSECURE` - cookie is only send to the server with an encrypted request over the https protocol;
